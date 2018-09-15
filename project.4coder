@@ -1,3 +1,4 @@
 extensions=".c.cpp.h.hpp.cc.bat";
 
 fkey_command_win[1] = {"build.bat", "*compilation*", true};
+fkey_command_win[2] = {"runProgram.bat", "*compilation*" , true};

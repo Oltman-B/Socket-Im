@@ -12,13 +12,15 @@ if "%SRC%" == "" SET SRC=..\code\ImServer.cpp
 REM SET OPTS=/W4 /wd4310 /wd4100 /wd4201 /wd4505 /wd4996 /wd4127 /wd4510 /wd4512 /wd4610 /wd4457 /WX
 SET OPTS=%OPTS% /GR- /nologo /FC
 
-SET OPTS= %OPTS% /nologo /FC
+SET OPTS=%OPTS% /nologo /FC
 
 SET DEBUG=/Zi
 
+SET LNKOPTS=/link /INCREMENTAL:NO
+
 mkdir build
 pushd build
-cl %OPTS% /I"%CODE_HOME% " %DEBUG% "%SRC%" User32.lib Gdi32.lib Ws2_32.lib
+cl %OPTS% /I"%CODE_HOME% " %DEBUG% "%SRC%" %LNKOPTS% Ws2_32.lib
 popd
 
 REM file spammation preventation
