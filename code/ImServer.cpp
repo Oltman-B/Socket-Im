@@ -6,7 +6,7 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     //wsaData to hold Winsock dll information
     WSADATA wsaData;
