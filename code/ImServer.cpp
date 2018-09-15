@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     /**********************Get address info*************/
     struct addrinfo *result = NULL;
     //*ptr is used to access each addrinfo struct returned in result as a linked list.
-    struct addrinfo *ptr = NULL;
+    //struct addrinfo *ptr = NULL;
     //hints is a struct to hold basic information about which type of socket
     //the caller (in this case server) supports. Must set zero out unused members
     struct addrinfo hints;
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         WSACleanup();
         return 1;
     }
-    /**************Got address info****************/
+    /**************Create Socket****************/
     
     //INVALID_SOCKET used like NULL
     SOCKET ListenSocket = INVALID_SOCKET;
@@ -87,7 +87,26 @@ int main(int argc, char **argv)
         //clean up address info after getaddrinfo function when socket fails
         freeaddrinfo(result);
         WSACleanup();
+        return 1;
     }
+    
+    /**************Bind Socket******************/
+    int bindResult;
+    bindResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+    if(bindResult == SOCKET_ERROR)
+    {
+        printf("failed to bind with error: %d\n", WSAGetLastError());
+        freeaddrinfo(result);
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    }
+    
+    //free address info no longer needed because bind has been made.
+    freeaddrinfo(result);
+    
+    while(true);
+    
     
     /*************End Socket Code Clean up Winsock dll**********/
     
