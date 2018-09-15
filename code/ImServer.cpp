@@ -17,6 +17,10 @@ int main(int argc, char *argv[])
     {
         printf("WSAStartup failed with error code: %d\n", wsaInit);
     }
-    
-    
+    if(wsaData.wHighVersion != wVersionRequired)
+    {
+        printf("No usable version of Winsock.dll found\n");
+        WSACleanup();
+        return 1;
+    }
 } 
