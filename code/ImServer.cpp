@@ -12,6 +12,7 @@ Baruch Oltman September 2018
 #undef UNICODE
 
 #define DEFAULT_PORT "27015"
+#define DEFAULT_BUFLEN 512
 
 int main(int argc, char **argv)
 {
@@ -83,7 +84,7 @@ int main(int argc, char **argv)
     
     if(ListenSocket == INVALID_SOCKET)
     {
-        printf("socket() error: %ld\n", WSAGetLastError());
+        printf("socket() error: %d\n", WSAGetLastError());
         //clean up address info after getaddrinfo function when socket fails
         freeaddrinfo(result);
         WSACleanup();
@@ -91,8 +92,7 @@ int main(int argc, char **argv)
     }
     
     /**************Bind Socket******************/
-    int bindResult;
-    bindResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+    int bindResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
     if(bindResult == SOCKET_ERROR)
     {
         printf("failed to bind with error: %d\n", WSAGetLastError());
@@ -105,10 +105,87 @@ int main(int argc, char **argv)
     //free address info no longer needed because bind has been made.
     freeaddrinfo(result);
     
-    while(true);
+    /************Listen for Connections**********/
+    int listenResult = listen(ListenSocket, SOMAXCONN);
+    if(listenResult == SOCKET_ERROR)
+    {
+        printf("Listen failed, error: %d\n", WSAGetLastError() );
+        WSACleanup();
+        return 1;
+    }
+    /************Accept and Handle CLient Connections***********/
+    // TODO(baruch): For testing, only allowing a single client. Eventually need to create a loop to handle all client connections.
+    SOCKET ClientSocket;
+    sockaddr *connectedAddress = NULL;
+    ClientSocket = accept(ListenSocket, connectedAddress, NULL);
+    if(ClientSocket == SOCKET_ERROR)
+    {
+        printf("Accept failed, error: %d\n", WSAGetLastError());
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    }
+    else
+    {
+        // TODO(baruch): Make sure this string correctly prints address
+        printf("Client connection from: %s accepted", (char *)connectedAddress);
+    }
+    
+    /**********Handle inbound and outbound data**********/
+    
+    char inBuf[DEFAULT_BUFLEN];
+    int dataBufLen = DEFAULT_BUFLEN;
+    int inDataResult, outDataResult;
+    
+    do
+    {
+        inDataResult = recv(ClientSocket, inBuf, dataBufLen, 0);
+        if(inDataResult > 0)
+        {
+            printf("Number of bytes received: %d", inDataResult);
+            
+            //Confirm to client message received
+            char confirmReceipt[] = "\nMessage received!\n";
+            outDataResult = send(ClientSocket, confirmReceipt, sizeof(confirmReceipt), 0);
+            if(outDataResult == SOCKET_ERROR)
+            {
+                printf("Confirmation message failed with error: %d\n", WSAGetLastError());
+                closesocket(ClientSocket);
+                WSACleanup();
+                return 1;
+            }
+            else
+            {
+                printf("Confirmation message sent\n");
+            }
+        }
+        else if(inDataResult == 0)
+        {
+            printf("Connection closing\n");
+        }
+        else
+        {
+            printf("Data receipt failed with error: %d\n", WSAGetLastError());
+            closesocket(ClientSocket);
+            WSACleanup();
+            return 1;
+        }
+        
+    } while(inDataResult > 0);
+    
+    //Shutdown sending portion of socket, can still receive data
+    int shutDownResult = shutdown(ClientSocket, SD_SEND);
+    if(shutDownResult == SOCKET_ERROR)
+    {
+        printf("Shutdown failure, error: %d\n", WSAGetLastError());
+        closesocket(ClientSocket);
+        WSACleanup();
+        return 1;
+    }
     
     
     /*************End Socket Code Clean up Winsock dll**********/
     
+    closesocket(ClientSocket);
     WSACleanup();
 } 
