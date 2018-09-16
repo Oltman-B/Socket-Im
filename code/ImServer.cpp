@@ -112,6 +112,10 @@ int main(int argc, char **argv)
         WSACleanup();
         return 1;
     }
+    else
+    {
+        printf("Now listening for client connections...\n");
+    }
     /************Accept and Handle CLient Connections***********/
     // TODO(baruch): For testing, only allowing a single client. Eventually need to create a loop to handle all client connections.
     SOCKET ClientSocket;
@@ -130,7 +134,7 @@ int main(int argc, char **argv)
         //inet_ntoa converts ip address to binary format.
         char *clientIp = inet_ntoa(connectedAddress.sin_addr);
         // TODO(baruch): Make sure this string correctly prints address
-        printf("Client connection from: %s accepted", clientIp);
+        printf("Client connection from: %s accepted\n", clientIp);
     }
     
     /**********Handle inbound and outbound data**********/
@@ -148,7 +152,8 @@ int main(int argc, char **argv)
             
             //Confirm to client message received
             char confirmReceipt[] = "\nMessage received!\n";
-            outDataResult = send(ClientSocket, confirmReceipt, sizeof(confirmReceipt), 0);
+            outDataResult =
+                send(ClientSocket, confirmReceipt, sizeof(confirmReceipt), 0);
             if(outDataResult == SOCKET_ERROR)
             {
                 printf("Confirmation message failed with error: %d\n", WSAGetLastError());

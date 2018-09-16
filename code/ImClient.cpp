@@ -110,7 +110,6 @@ int main(int argc, char **argv)
     }
     
     // TODO(baruch):If connection fails move ptr to next address struct in linked list and try again. For testing, just trying first address.
-    while(true);// TODO(baruch): Remove
     
     freeaddrinfo(result);
     
@@ -121,6 +120,7 @@ int main(int argc, char **argv)
         return 1;
     }
     
+    while(true);// TODO(baruch): Remove
     /*************END of Socket CODE CLEANUP********/
     
     // TODO(baruch): close socket
