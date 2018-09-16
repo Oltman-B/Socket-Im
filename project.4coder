@@ -1,4 +1,7 @@
 extensions=".c.cpp.h.hpp.cc.bat";
 
-fkey_command_win[1] = {"build.bat", "*compilation*", true};
-fkey_command_win[2] = {"runProgram.bat", "*compilation*" , true};
+fkey_command_win[1] = {"buildServer.bat", "*compilation*", true};
+fkey_command_win[2] = {"runServer.bat", "*compilation*" , true};
+
+fkey_command_win[3] = {"buildClient.bat", "*compilation*", true};
+fkey_command_win[4] = {"runClient.bat", "*compilation*" , true};

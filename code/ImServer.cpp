@@ -16,6 +16,7 @@ Baruch Oltman September 2018
 
 int main(int argc, char **argv)
 {
+    
     //wsaData to hold Winsock dll information
     WSADATA wsaData;
     WORD wVersionRequired = MAKEWORD(2, 2);
@@ -61,7 +62,7 @@ int main(int argc, char **argv)
     // This is a stream socket i.e. tcp/ip
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
-    //Specifies socket will be used in bind function 
+    //Specifies socket will be used in bind function
     hints.ai_flags = AI_PASSIVE;
     
     //gives list of addresses based on port and type?
@@ -188,4 +189,4 @@ int main(int argc, char **argv)
     
     closesocket(ClientSocket);
     WSACleanup();
-} 
+}
