@@ -12,7 +12,7 @@ Baruch Oltman September 2018
 // TODO(baruch): Only supporting ascii consider Unicode later
 #undef UNICODE
 
-#define DEFAULT_PORT "27015"
+#define DEFAULT_PORT "5555"
 #define DEFAULT_BUFLEN 512
 #define SERVER_IPV4 "10.50.212.152"
 
@@ -95,6 +95,31 @@ int main(int argc, char **argv)
         return 1;
     }
     
+    /*****************Connect to socket**************/
+    
+    int connectResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
+    if(connectResult == SOCKET_ERROR)
+    {
+        printf("Connect failed with error: %d\n", WSAGetLastError());
+        closesocket(ConnectSocket);
+        ConnectSocket = INVALID_SOCKET;
+    }
+    else
+    {
+        printf("Connected with server: %s\n", serverIPv4);
+    }
+    
+    // TODO(baruch):If connection fails move ptr to next address struct in linked list and try again. For testing, just trying first address.
+    while(true);// TODO(baruch): Remove
+    
+    freeaddrinfo(result);
+    
+    if(ConnectSocket == INVALID_SOCKET)
+    {
+        printf("Unable to connect with server\n");
+        WSACleanup();
+        return 1;
+    }
     
     /*************END of Socket CODE CLEANUP********/
     

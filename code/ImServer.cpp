@@ -11,7 +11,7 @@ Baruch Oltman September 2018
 // TODO(baruch): Only supporting ascii consider Unicode later
 #undef UNICODE
 
-#define DEFAULT_PORT "27015"
+#define DEFAULT_PORT "5555"
 #define DEFAULT_BUFLEN 512
 
 int main(int argc, char **argv)
@@ -115,8 +115,9 @@ int main(int argc, char **argv)
     /************Accept and Handle CLient Connections***********/
     // TODO(baruch): For testing, only allowing a single client. Eventually need to create a loop to handle all client connections.
     SOCKET ClientSocket;
-    sockaddr *connectedAddress = NULL;
-    ClientSocket = accept(ListenSocket, connectedAddress, NULL);
+    SOCKADDR_IN connectedAddress;
+    int addressLength = sizeof(connectedAddress);
+    ClientSocket = accept(ListenSocket, (SOCKADDR *) &connectedAddress, &addressLength);
     if(ClientSocket == SOCKET_ERROR)
     {
         printf("Accept failed, error: %d\n", WSAGetLastError());
@@ -126,8 +127,10 @@ int main(int argc, char **argv)
     }
     else
     {
+        //inet_ntoa converts ip address to binary format.
+        char *clientIp = inet_ntoa(connectedAddress.sin_addr);
         // TODO(baruch): Make sure this string correctly prints address
-        printf("Client connection from: %s accepted", (char *)connectedAddress);
+        printf("Client connection from: %s accepted", clientIp);
     }
     
     /**********Handle inbound and outbound data**********/

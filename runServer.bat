@@ -1,3 +1,3 @@
 @echo off
 
-start "SocketIm" P:/Projects/SocketIm/build/ImServer.exe
+start "SocketIm Server" P:/Projects/SocketIm/build/ImServer.exe
