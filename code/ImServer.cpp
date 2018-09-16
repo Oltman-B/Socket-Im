@@ -11,7 +11,11 @@ Baruch Oltman September 2018
 // TODO(baruch): Only supporting ascii consider Unicode later
 #undef UNICODE
 
+<<<<<<< Updated upstream
 #define DEFAULT_PORT "27015"
+=======
+#define DEFAULT_PORT 5555
+>>>>>>> Stashed changes
 #define DEFAULT_BUFLEN 512
 
 int main(int argc, char **argv)
@@ -42,6 +46,7 @@ int main(int argc, char **argv)
     /**********************Socket Code Here**********************/
     
     
+<<<<<<< Updated upstream
     /**********************Get address info*************/
     struct addrinfo *result = NULL;
     //*ptr is used to access each addrinfo struct returned in result as a linked list.
@@ -73,37 +78,41 @@ int main(int argc, char **argv)
         WSACleanup();
         return 1;
     }
+=======
+>>>>>>> Stashed changes
     /**************Create Socket****************/
+    SOCKADDR_IN SockAddrIP4;
+    SockAddrIP4.sin_family = AF_INET;
+    SockAddrIP4.sin_addr.s_addr = INADDR_ANY;
+    SockAddrIP4.sin_port = htons(DEFAULT_PORT);
     
     //INVALID_SOCKET used like NULL
     SOCKET ListenSocket = INVALID_SOCKET;
     
     // TODO(baruch): Only supporting IP_V4
     // Socket for server to listen on for client connections
-    ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     
     if(ListenSocket == INVALID_SOCKET)
     {
         printf("socket() error: %d\n", WSAGetLastError());
         //clean up address info after getaddrinfo function when socket fails
-        freeaddrinfo(result);
         WSACleanup();
         return 1;
     }
     
     /**************Bind Socket******************/
-    int bindResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+    int bindResult = bind(ListenSocket, (SOCKADDR*)&SockAddrIP4, sizeof(SOCKADDR_IN));
     if(bindResult == SOCKET_ERROR)
     {
         printf("failed to bind with error: %d\n", WSAGetLastError());
-        freeaddrinfo(result);
         closesocket(ListenSocket);
         WSACleanup();
         return 1;
     }
     
+    
     //free address info no longer needed because bind has been made.
-    freeaddrinfo(result);
     
     /************Listen for Connections**********/
     int listenResult = listen(ListenSocket, SOMAXCONN);
